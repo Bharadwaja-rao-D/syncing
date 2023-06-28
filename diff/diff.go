@@ -2,18 +2,26 @@ package diff
 
 import (
 	"github.com/sergi/go-diff/diffmatchpatch"
+	"log"
 )
 
-func Differ(src, dst string) string {
-	differ := diffmatchpatch.New()
-	return differ.DiffToDelta(differ.DiffMain(src, dst, false))
+type Differ struct {
+	diff_matcher *diffmatchpatch.DiffMatchPatch
+	to_ws        chan string
+	from_ws      chan string
 }
 
-func DeDiffer(src, edit_script string) string {
-	differ := diffmatchpatch.New()
+func (d *Differ) ToDiff(src, dst string) string {
+	diffs := d.diff_matcher.DiffMain(src, dst, false)
+	return d.diff_matcher.DiffToDelta(diffs)
+}
+
+func (d *Differ) FromDiff(src, edit_script string) string {
+	differ := d.diff_matcher
 	dst, err := differ.DiffFromDelta(src, edit_script)
 
 	if err != nil {
+		log.Fatal(err)
 	}
 
 	return differ.DiffText2(dst)
