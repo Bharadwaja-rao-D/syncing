@@ -1,0 +1,15 @@
+package main
+
+import (
+	"log"
+	"os"
+)
+
+func main() {
+	data, error := os.ReadFile("testdata/hello")
+	if error != nil {
+		log.Fatal(error)
+	}
+	os.Stdin.Write(data)
+
+}

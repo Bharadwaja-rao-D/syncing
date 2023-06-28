@@ -1,7 +1,6 @@
-package main
+package diff;
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -16,20 +15,10 @@ const (
 type Diff struct {
     operation editOperation
     index int
-    tochar string
+    char string
 }
 
 type EditScript []Diff
-
-func main() {
-	before := "horse"
-	after := "ros"
-
-    _, script := diff(before, after);
-    fmt.Println(script)
-
-
-}
 
 func min(nums ...int) int {
 	min := math.MaxInt64
@@ -42,6 +31,8 @@ func min(nums ...int) int {
 	return min
 }
 
+/*will return a edit script used to convert from before to after*/
+//TODO: Make it more generic
 func diff(before string, after string) (int, EditScript) {
 
     script := make([]Diff, 0);
@@ -90,10 +81,10 @@ func diff(before string, after string) (int, EditScript) {
             script = append(script, Diff{operation: Delete, index: i-1});
 			i--
 		} else if j > 0 && dp[i][j] == dp[i][j-1]+1 {
-            script = append(script, Diff{operation: Replace, index: i-1, tochar: string(after[j-1])})
+            script = append(script, Diff{operation: Replace, index: i-1, char: string(after[j-1])})
 			j--
 		} else if i > 0 && j > 0 {
-            script = append(script, Diff{operation: Replace, index: i-1, tochar: string(after[j-1])});
+            script = append(script, Diff{operation: Replace, index: i-1, char: string(after[j-1])});
 			i--
 			j--
 		}
