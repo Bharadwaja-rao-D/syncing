@@ -7,21 +7,46 @@ import (
 
 type Differ struct {
 	diff_matcher *diffmatchpatch.DiffMatchPatch
-	to_ws        chan string
-	from_ws      chan string
+	ToStd        chan string
+	FromStd      chan string
+	ToClient     chan string
+	FromClient   chan string
 }
 
-func (d *Differ) ToDiff(src, dst string) string {
+func NewDiffer() *Differ {
+	return &Differ{diff_matcher: diffmatchpatch.New(), ToStd: make(chan string),
+		FromStd: make(chan string), ToClient: make(chan string), FromClient: make(chan string)}
+}
+
+func (d *Differ) StartDiffer() {
+	var prev string = "start text"
+
+	go func() {
+		//Takes input from the stdin diffs it with the prev string and sends to *ToClient chan*
+		for txt := range d.FromStd {
+			edit_script := d.toDiff(prev, txt)
+			d.ToClient <- edit_script
+		}
+	}()
+
+	for edit_script := range d.FromClient {
+		updated := d.fromDiff(prev, edit_script)
+		d.ToStd <- updated
+		prev = updated
+	}
+}
+
+func (d *Differ) toDiff(src, dst string) string {
 	diffs := d.diff_matcher.DiffMain(src, dst, false)
 	return d.diff_matcher.DiffToDelta(diffs)
 }
 
-func (d *Differ) FromDiff(src, edit_script string) string {
+func (d *Differ) fromDiff(src, edit_script string) string {
 	differ := d.diff_matcher
 	dst, err := differ.DiffFromDelta(src, edit_script)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("%s => %s %s\n", src, edit_script, err)
 	}
 
 	return differ.DiffText2(dst)

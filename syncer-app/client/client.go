@@ -9,23 +9,44 @@ import (
 )
 
 type Client struct {
-	Conn   *websocket.Conn
+	conn   *websocket.Conn
 	differ *diff.Differ
 }
 
-func NewClient(url url.URL) *Client {
+func NewClient(url url.URL, differ *diff.Differ) *Client {
 	conn, _, err := websocket.DefaultDialer.Dial(url.String(), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-    conn.WriteMessage(websocket.TextMessage,[]byte("Hello Server"));
-	return &Client{Conn: conn, differ: new(diff.Differ)}
+	return &Client{conn: conn, differ: differ}
 }
 
-func (c *Client) Watch(file_path string) {
+//recvs messages from server and sends to *FromClient chan*
+func (c *Client) fromServer() {
+	d := c.differ
+	conn := c.conn
+	for {
+		_, msg, err := conn.ReadMessage()
+		if err != nil {
+			log.Fatal(err)
+			break
+		}
+        log.Printf("DEBUG: fromServer %s\n", msg)
+		d.FromClient <- string(msg)
+	}
 }
 
-// These two functions should run concurrently
-func (c *Client) ToServer() {}
+//sends messages from *ToClient chan* to server
+func (c *Client) toServer() {
+	d := c.differ
+	conn := c.conn
+	for msg := range d.ToClient {
+		conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	}
+}
 
-func (c *Client) FromServer() {}
+func (c *Client) Start() {
+	log.Println("Started Client...")
+    go c.toServer()
+    c.fromServer()
+}
