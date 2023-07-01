@@ -1,11 +1,14 @@
 package client
 
 import (
-	"log"
 	"net/url"
 
 	"github.com/bharadwaja-rao-d/syncing/diff"
 	"github.com/gorilla/websocket"
+
+    "github.com/rs/zerolog/log"
+
+
 )
 
 type Client struct {
@@ -13,12 +16,14 @@ type Client struct {
 	differ *diff.Differ
 }
 
-func NewClient(url url.URL, differ *diff.Differ) *Client {
+func NewClient(url url.URL, differ *diff.Differ) (*Client, string) {
 	conn, _, err := websocket.DefaultDialer.Dial(url.String(), nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
-	return &Client{conn: conn, differ: differ}
+
+    _, fmsg, _ := conn.ReadMessage()
+	return &Client{conn: conn, differ: differ}, string(fmsg)
 }
 
 //recvs messages from server and sends to *FromClient chan*
@@ -28,10 +33,10 @@ func (c *Client) fromServer() {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Fatal(err)
+		log.Fatal().Err(err)
 			break
 		}
-        log.Printf("DEBUG: fromServer %s\n", msg)
+        log.Debug().Msgf("Client: %s\n", msg)
 		d.FromClient <- string(msg)
 	}
 }
@@ -46,7 +51,7 @@ func (c *Client) toServer() {
 }
 
 func (c *Client) Start() {
-	log.Println("Started Client...")
+	log.Debug().Msg("Started Client")
     go c.toServer()
     c.fromServer()
 }
