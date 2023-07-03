@@ -38,7 +38,7 @@ func main() {
 		go integrator.read(differ.FromStd)
 		go integrator.write(differ.ToStd)
 
-		u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/collaborate/1"}
+		u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: fmt.Sprintf("/collaborate/%s", args[1])}
 		c, fmsg := client.NewClient(u, differ)
 
 		go differ.StartDiffer(fmsg)
