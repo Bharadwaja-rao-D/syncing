@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/bharadwaja-rao-d/syncing/diff"
-	"github.com/bharadwaja-rao-d/syncing/protocol"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog/log"
 )
@@ -55,30 +53,25 @@ func collaborate(w http.ResponseWriter, r *http.Request, s *SharedState) {
 
 	defer conn.Close()
 
-	//conn.WriteMessage(websocket.TextMessage, []byte(room.last_file))
-    fmsg := protocol.CSMessage[string]{Mtype: protocol.HandShake, From: "server", Content: room.lastest_content}
-    log.Debug().Msgf(fmsg.Content)
-    conn.WriteJSON(fmsg)
+	conn.WriteMessage(websocket.TextMessage, []byte(room.last_file))
 
 	for {
 
-        var msg protocol.CSMessage[diff.EditScript];
-        _ = conn.ReadJSON(msg)
-		if  len(msg.Content) == 0 {
+		mtype, msg, _ := conn.ReadMessage()
+		if mtype == websocket.CloseMessage || len(msg) == 0 {
 			log.Info().Msgf("Closing connection: %s\n", conn.RemoteAddr())
 			break
 		}
 
-        //updating the latest file u have in server
-		room.lastest_content = room.differ.FromDiff(room.lastest_content, msg.Content)
+		room.last_file = room.differ.FromDiff(room.last_file, string(msg))
 
 		//broadcasting to all clients of the group
 		for _, clients := range room.conns {
-            err := clients.WriteJSON(protocol.CSMessage[diff.EditScript]{Mtype: protocol.Update, From: msg.From, Content: msg.Content})
+			err := clients.WriteMessage(websocket.TextMessage, msg)
 			if err != nil {
 				log.Fatal().Err(err)
 			}
-			log.Printf("To client %s: %s\n", conn.RemoteAddr(), msg.Content)
+			log.Printf("To client %s: %s\n", conn.RemoteAddr(), msg)
 		}
 	}
 }

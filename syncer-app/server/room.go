@@ -13,13 +13,13 @@ var id_gen = 0
 type Room struct {
 	room_id   string
 	conns     []*websocket.Conn
-	lastest_content string
+	last_file string
 	differ    diff.Differ
 }
 
 func NewRoom() *Room {
 	id_gen += 1
-	return &Room{room_id: strconv.FormatInt(int64(id_gen), 10), conns: make([]*websocket.Conn, 0), differ: *diff.NewDiffer(), lastest_content: "Start text"}
+	return &Room{room_id: strconv.FormatInt(int64(id_gen), 10), conns: make([]*websocket.Conn, 0), differ: *diff.NewDiffer()}
 }
 
 func (r *Room) Start() {

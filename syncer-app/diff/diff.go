@@ -5,24 +5,22 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
-type EditScript string;
-
 type Differ struct {
 	diff_matcher *diffmatchpatch.DiffMatchPatch
 	ToStd        chan string
 	FromStd      chan string
-	ToClient     chan EditScript
-	FromClient   chan EditScript
+	ToClient     chan string
+	FromClient   chan string
 }
 
 func NewDiffer() *Differ {
 	return &Differ{diff_matcher: diffmatchpatch.New(), ToStd: make(chan string),
-		FromStd: make(chan string), ToClient: make(chan EditScript), FromClient: make(chan EditScript)}
+		FromStd: make(chan string), ToClient: make(chan string), FromClient: make(chan string)}
 }
 
 func (d *Differ) StartDiffer(fmsg string) {
 	var prev string = fmsg
-    log.Debug().Msgf("StartDiffer:First Message :%s", fmsg);
+    log.Debug().Msgf("StartDiffer:First Message :%s\n", fmsg);
 
 	go func() {
 		//Takes input from the stdin diffs it with the prev string and sends to *ToClient chan*
@@ -39,14 +37,14 @@ func (d *Differ) StartDiffer(fmsg string) {
 	}
 }
 
-func (d *Differ) toDiff(src, dst string) EditScript {
+func (d *Differ) toDiff(src, dst string) string {
 	diffs := d.diff_matcher.DiffMain(src, dst, false)
-	return EditScript(d.diff_matcher.DiffToDelta(diffs))
+	return d.diff_matcher.DiffToDelta(diffs)
 }
 
-func (d *Differ) FromDiff(src string, edit_script EditScript) string {
+func (d *Differ) FromDiff(src, edit_script string) string {
 	differ := d.diff_matcher
-	dst, err := differ.DiffFromDelta(src, string(edit_script))
+	dst, err := differ.DiffFromDelta(src, edit_script)
 
 	if err != nil {
         log.Fatal().Err(err)

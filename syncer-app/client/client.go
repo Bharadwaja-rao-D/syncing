@@ -4,14 +4,14 @@ import (
 	"net/url"
 
 	"github.com/bharadwaja-rao-d/syncing/diff"
-	"github.com/bharadwaja-rao-d/syncing/protocol"
 	"github.com/gorilla/websocket"
 
-	"github.com/rs/zerolog/log"
+    "github.com/rs/zerolog/log"
+
+
 )
 
 type Client struct {
-    uname string
 	conn   *websocket.Conn
 	differ *diff.Differ
 }
@@ -22,30 +22,22 @@ func NewClient(url url.URL, differ *diff.Differ) (*Client, string) {
 		log.Fatal().Err(err)
 	}
 
-    var fmsg protocol.CSMessage
-    _, msg, _ := conn.ReadMessage();
-    log.Debug().Msg(string(msg))
-    err = conn.ReadJSON(fmsg)
-	if err != nil {
-		log.Fatal().Err(err)
-	}
-    log.Debug().Msgf("NewClient %s", fmsg.Content)
-	return &Client{conn: conn, differ: differ}, fmsg.Content
+    _, fmsg, _ := conn.ReadMessage()
+	return &Client{conn: conn, differ: differ}, string(fmsg)
 }
 
 //recvs messages from server and sends to *FromClient chan*
 func (c *Client) fromServer() {
 	d := c.differ
 	conn := c.conn
-    var msg protocol.CSMessage
 	for {
-		err := conn.ReadJSON(msg)
+		_, msg, err := conn.ReadMessage()
 		if err != nil {
 		log.Fatal().Err(err)
 			break
 		}
-        log.Debug().Msgf("Client: %s\n", msg.Content)
-		d.FromClient <- diff.EditScript(msg.Content)
+        log.Debug().Msgf("Client: %s\n", msg)
+		d.FromClient <- string(msg)
 	}
 }
 
@@ -54,7 +46,7 @@ func (c *Client) toServer() {
 	d := c.differ
 	conn := c.conn
 	for msg := range d.ToClient {
-        conn.WriteJSON(protocol.CSMessage[diff.EditScript]{Mtype: protocol.Update, Content: msg, From: conn.LocalAddr().String()})
+		conn.WriteMessage(websocket.TextMessage, []byte(msg))
 	}
 }
 
