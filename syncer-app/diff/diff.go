@@ -21,6 +21,7 @@ func NewDiffer() *Differ {
 func (d *Differ) StartDiffer(fmsg string) {
 	var prev string = fmsg
     log.Debug().Msgf("StartDiffer:First Message :%s\n", fmsg);
+    d.ToStd <- fmsg;
 
 	go func() {
 		//Takes input from the stdin diffs it with the prev string and sends to *ToClient chan*

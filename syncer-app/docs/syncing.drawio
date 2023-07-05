@@ -1,13 +1,10 @@
-<mxfile host="Electron" modified="2023-06-29T06:34:06.886Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.5.0 Chrome/112.0.5615.204 Electron/24.5.1 Safari/537.36" etag="6MFOvNgOUmZAHXy6B7Uy" version="21.5.0" type="device">
+<mxfile host="Electron" modified="2023-07-05T02:38:32.470Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.5.0 Chrome/112.0.5615.204 Electron/24.5.1 Safari/537.36" etag="a8JXsTwb1CW9oXyNZkQL" version="21.5.0" type="device">
   <diagram name="Page-1" id="OuNMkqoF6VKDvM-TnTxS">
-    <mxGraphModel dx="710" dy="847" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="836" dy="392" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="OUUixIY4SZy-NDFA4nhA-1" value="cmd:&lt;br&gt;syncing collaborate file -&amp;gt; Creates a room and returns room id" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="70" y="95" width="160" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="OUUixIY4SZy-NDFA4nhA-2" value="1. Websocket connection&lt;br&gt;2. Diffing and Dediffing the file&lt;br&gt;3. Watching file" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="OUUixIY4SZy-NDFA4nhA-2" value="1. Websocket connection&lt;br&gt;2. Diffing and Dediffing the file&lt;br&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="270" y="20" width="170" height="60" as="geometry" />
         </mxCell>
         <mxCell id="OUUixIY4SZy-NDFA4nhA-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="OUUixIY4SZy-NDFA4nhA-3" target="OUUixIY4SZy-NDFA4nhA-8" edge="1">
@@ -50,6 +47,69 @@
         </mxCell>
         <mxCell id="OUUixIY4SZy-NDFA4nhA-13" value="File string" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="480" y="288" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="cBFikZ1947Sx8XJU_t8t-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="584" y="570.1290322580645" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-1" value="Client" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="354" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-2" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="cBFikZ1947Sx8XJU_t8t-1" edge="1">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="244" y="569.6800000000001" as="sourcePoint" />
+            <mxPoint x="344" y="569.6800000000001" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-3" value="Stdin" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="259" y="538" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-5" value="Stdout" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="489" y="538" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-6" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="cBFikZ1947Sx8XJU_t8t-1" target="cBFikZ1947Sx8XJU_t8t-7" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="424" y="508" as="sourcePoint" />
+            <mxPoint x="414" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-7" value="Creates / Connects to the room. Syncing functionality by sending / receiving diffs of updates" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="349" y="390" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cBFikZ1947Sx8XJU_t8t-8" value="&lt;b&gt;TODO:&lt;/b&gt;&lt;br&gt;Integrate it with neovim&lt;br&gt;Create a render-app" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="110" y="420" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-1" value="FileContent" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="700" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="71fXn7dFhdDbPnkkekcA-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-2" value="Renderer" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="71fXn7dFhdDbPnkkekcA-3" target="71fXn7dFhdDbPnkkekcA-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-3" value="Syncer" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-6" value="Pallet" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="710" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-7" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="100" relative="1" as="geometry">
+            <mxPoint x="469" y="739.78" as="sourcePoint" />
+            <mxPoint x="569" y="739.78" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="71fXn7dFhdDbPnkkekcA-8" value="" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="780" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
