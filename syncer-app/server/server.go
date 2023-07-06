@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog/log"
+    "github.com/rs/cors"
 )
 
 type SharedState struct {
@@ -42,11 +43,15 @@ func collaborate(w http.ResponseWriter, r *http.Request, s *SharedState) {
 	room_id := r.URL.Path[len("/collaborate/"):]
 	room := s.GetRoom(room_id)
 
+    log.Debug().Msg(r.Header.Get("Upgrade"));
+
 	upgrader := new(websocket.Upgrader)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
+
+    log.Debug().Msgf("%p, %p", room.conns, conn);
 
 	room.conns = append(room.conns, conn)
 	log.Info().Msgf("%s joined room with id %s\n", conn.RemoteAddr(), room.room_id)
@@ -76,15 +81,23 @@ func collaborate(w http.ResponseWriter, r *http.Request, s *SharedState) {
 	}
 }
 
+
 func Server() {
+    mux := http.NewServeMux()
 
 	state := &SharedState{Rooms: make(map[string]*Room)}
 
-	http.HandleFunc("/collaborate", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/collaborate", func(w http.ResponseWriter, r *http.Request) {
 		start_collaboration(w, r, state)
 	})
-	http.HandleFunc("/collaborate/", func(w http.ResponseWriter, r *http.Request) {
+
+	mux.HandleFunc("/collaborate/", func(w http.ResponseWriter, r *http.Request) {
 		collaborate(w, r, state)
 	})
-	http.ListenAndServe(":8080", nil)
+
+    // cors.Default() setup the middleware with default options being
+    // all origins accepted with simple methods (GET, POST). See
+    // documentation below for more options.
+    handler := cors.Default().Handler(mux)
+    http.ListenAndServe(":8080", handler)
 }
