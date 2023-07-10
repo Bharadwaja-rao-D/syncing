@@ -1,12 +1,14 @@
-package server
+package main
 
 import (
+	"flag"
 	"net/http"
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-    "github.com/rs/cors"
 )
 
 type SharedState struct {
@@ -43,23 +45,20 @@ func collaborate(w http.ResponseWriter, r *http.Request, s *SharedState) {
 	room_id := r.URL.Path[len("/collaborate/"):]
 	room := s.GetRoom(room_id)
 
-    log.Debug().Msg(r.Header.Get("Upgrade"));
-
 	upgrader := new(websocket.Upgrader)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal().Err(err)
 	}
 
-    log.Debug().Msgf("%p, %p", room.conns, conn);
-
 	room.conns = append(room.conns, conn)
 	log.Info().Msgf("%s joined room with id %s\n", conn.RemoteAddr(), room.room_id)
 
 	defer conn.Close()
 
-	conn.WriteMessage(websocket.TextMessage, []byte(room.last_file))
+	conn.WriteMessage(websocket.TextMessage, []byte(room.last_file)) //first message
 
+    //Something is wrong here
 	for {
 
 		mtype, msg, _ := conn.ReadMessage()
@@ -68,22 +67,27 @@ func collaborate(w http.ResponseWriter, r *http.Request, s *SharedState) {
 			break
 		}
 
+        //might be needing mutex here
 		room.last_file = room.differ.FromDiff(room.last_file, string(msg))
 
-		//broadcasting to all clients of the group
-		for _, clients := range room.conns {
-			err := clients.WriteMessage(websocket.TextMessage, msg)
+		//broadcasting to all clients (except to the sender) of the group
+		for _, client := range room.conns {
+
+			if client.RemoteAddr() == conn.RemoteAddr() {
+				continue
+			}
+
+			err := client.WriteMessage(websocket.TextMessage, msg)
 			if err != nil {
 				log.Fatal().Err(err)
 			}
-			log.Printf("To client %s: %s\n", conn.RemoteAddr(), msg)
+			log.Printf("To client %s: %s\n", client.RemoteAddr(), msg)
 		}
 	}
 }
 
-
 func Server() {
-    mux := http.NewServeMux()
+	mux := http.NewServeMux()
 
 	state := &SharedState{Rooms: make(map[string]*Room)}
 
@@ -95,9 +99,22 @@ func Server() {
 		collaborate(w, r, state)
 	})
 
-    // cors.Default() setup the middleware with default options being
-    // all origins accepted with simple methods (GET, POST). See
-    // documentation below for more options.
-    handler := cors.Default().Handler(mux)
-    http.ListenAndServe(":8080", handler)
+	// cors.Default() setup the middleware with default options being
+	// all origins accepted with simple methods (GET, POST). See
+	// documentation below for more options.
+	handler := cors.Default().Handler(mux)
+	http.ListenAndServe(":8080", handler)
+}
+
+func main(){
+
+	debug := flag.Bool("debug", false, "sets log level to debug")
+	flag.Parse()
+
+	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	if *debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
+
+    Server()
 }

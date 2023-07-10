@@ -28,6 +28,7 @@ func (d *Differ) StartDiffer(fmsg string) {
 		for txt := range d.FromStd {
 			edit_script := d.toDiff(prev, txt)
 			d.ToClient <- edit_script
+		    prev = txt
 		}
 	}()
 

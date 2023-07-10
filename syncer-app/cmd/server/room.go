@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"strconv"
@@ -19,8 +19,5 @@ type Room struct {
 
 func NewRoom() *Room {
 	id_gen += 1
-	return &Room{room_id: strconv.FormatInt(int64(id_gen), 10), conns: make([]*websocket.Conn, 0), differ: *diff.NewDiffer()}
-}
-
-func (r *Room) Start() {
+	return &Room{room_id: strconv.FormatInt(int64(id_gen), 10), conns: make([]*websocket.Conn, 0), differ: *diff.NewDiffer() }
 }

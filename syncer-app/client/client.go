@@ -6,9 +6,7 @@ import (
 	"github.com/bharadwaja-rao-d/syncing/diff"
 	"github.com/gorilla/websocket"
 
-    "github.com/rs/zerolog/log"
-
-
+	"github.com/rs/zerolog/log"
 )
 
 type Client struct {
@@ -22,26 +20,26 @@ func NewClient(url url.URL, differ *diff.Differ) (*Client, string) {
 		log.Fatal().Err(err)
 	}
 
-    _, fmsg, _ := conn.ReadMessage()
+	_, fmsg, _ := conn.ReadMessage()
 	return &Client{conn: conn, differ: differ}, string(fmsg)
 }
 
-//recvs messages from server and sends to *FromClient chan*
+// recvs messages from server and sends to *FromClient chan*
 func (c *Client) fromServer() {
 	d := c.differ
 	conn := c.conn
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-		log.Fatal().Err(err)
+			log.Fatal().Err(err)
 			break
 		}
-        log.Debug().Msgf("Client: %s\n", msg)
+		log.Debug().Msgf("Client: %s\n", msg)
 		d.FromClient <- string(msg)
 	}
 }
 
-//sends messages from *ToClient chan* to server
+// sends messages from *ToClient chan* to server
 func (c *Client) toServer() {
 	d := c.differ
 	conn := c.conn
@@ -52,6 +50,7 @@ func (c *Client) toServer() {
 
 func (c *Client) Start() {
 	log.Debug().Msg("Started Client")
-    go c.toServer()
-    c.fromServer()
+	go c.toServer()
+	c.fromServer()
 }
+
